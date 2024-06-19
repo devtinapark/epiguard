@@ -1,3 +1,5 @@
+import React, { useContext } from 'react';
+import { AppContext } from '../_layout';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Image, Button, Platform } from 'react-native';
 import { Collapsible } from '@/components/Collapsible';
@@ -6,7 +8,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-export default function MeScreen() {
+export default function ExposureScreen() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#F9E3A0', dark: '#F9E3A0' }}

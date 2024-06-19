@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -15,29 +14,29 @@ export default function TabLayout() {
         headerShown: false,
       }}>
       <Tabs.Screen
-        name="index"
+        name="infection"
         options={{
-          title: 'Home',
+          title: 'Infection',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'person-circle' : 'person-circle-outline'} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="me"
+        name="exposure"
         options={{
-          title: 'Me',
+          title: 'Exposure',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'alert-circle' : 'alert-circle-outline'} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="analytics"
         options={{
-          title: 'Explore',
+          title: 'Analytics',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'map' : 'map-outline'} color={color} />
+            <TabBarIcon name={focused ? 'analytics' : 'analytics-outline'} color={color} />
           ),
         }}
       />
