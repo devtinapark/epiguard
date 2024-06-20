@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
-  const { connected, setConnected, infected, setInfected, exposed, setExposed } = useContext(AppContext);
+  const { connected, setConnected, infected, setInfected, exposed, setExposed, encounters, setEncounters } = useContext(AppContext);
   const [medicalWallet, setMedicalWallet] = useState<string>('');
 
   return (

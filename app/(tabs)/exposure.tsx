@@ -9,7 +9,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function ExposureScreen() {
-  const { connected, setConnected, infected, setInfected, exposed, setExposed } = useContext(AppContext);
+  const { connected, setConnected, infected, setInfected, exposed, setExposed, encounters, setEncounters } = useContext(AppContext);
 
   const getExposedStatus = (exposedCode?: number): string => {
     switch (exposedCode) {
@@ -51,7 +51,7 @@ Inform your recent contacts about your infection and exposure status anonymously
           By clicking SEND, I authorize EpiGuard to send anonymous exposure warnings to my network.
         </ThemedText>
         <Button
-          onPress={() => console.log('button pressed')}
+          onPress={() => console.log('encounters', encounters)}
           title="Send"
           color="#841584"
           accessibilityLabel="Authorize"

@@ -1,15 +1,20 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+interface Encounter {
+  encounteredAddress: string;
+  encounteredAt: number; // timestamp
+}
+
 interface AppState {
   connected: boolean;
   setConnected: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,7 +40,21 @@ interface AppState {
     notifiedAt?: number | undefined;
     exposedCode?: number | undefined; // added exposedCode property
   }>>;
+  encounters: Encounter[];
+  setEncounters: React.Dispatch<React.SetStateAction<Encounter[]>>;
 }
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBf_Cq84EzVD-pZBPXLpTPQtLzaAM0wNzk",
+  authDomain: "epiguard-42198.firebaseapp.com",
+  projectId: "epiguard-42198",
+  storageBucket: "epiguard-42198.appspot.com",
+  messagingSenderId: "258404406244",
+  appId: "1:258404406244:web:32066a7e4c41892313edf1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export const AppContext = createContext<AppState>({
   connected: false,
@@ -48,9 +67,11 @@ export const AppContext = createContext<AppState>({
     isExposed: false,
   },
   setExposed: () => { },
+  encounters: [],
+  setEncounters: () => { },
 });
 
-export default function RootLayout() {
+const RootLayout = () => {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -65,6 +86,7 @@ export default function RootLayout() {
   }>({
     isInfected: false,
   });
+
   const [exposed, setExposed] = useState<{
     isExposed: boolean;
     notifiedAt?: number;
@@ -73,8 +95,27 @@ export default function RootLayout() {
     isExposed: false,
   });
 
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
+
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Encounters"));
+        const encountersData: Encounter[] = [];
+
+        querySnapshot.forEach((doc) => {
+          const { encounteredAddress, encounteredAt } = doc.data();
+          encountersData.push({ encounteredAddress, encounteredAt });
+        });
+
+        setEncounters(encountersData);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
     if (loaded) {
+      fetchData();
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -92,14 +133,19 @@ export default function RootLayout() {
         setInfected,
         exposed,
         setExposed,
+        encounters,
+        setEncounters,
       }}
     >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
+          {/* Your navigation stack screens */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </ThemeProvider>
     </AppContext.Provider>
   );
-}
+};
+
+export default RootLayout;
