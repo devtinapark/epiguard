@@ -13,18 +13,40 @@ SplashScreen.preventAutoHideAsync();
 interface AppState {
   connected: boolean;
   setConnected: React.Dispatch<React.SetStateAction<boolean>>;
-  infected: boolean;
-  setInfected: React.Dispatch<React.SetStateAction<boolean>>;
-  exposed: boolean;
-  setExposed: React.Dispatch<React.SetStateAction<boolean>>;
+  infected: {
+    isInfected: boolean;
+    infectedAt?: number; // timestamp
+    verifiedAt?: number; // timestamp
+    verifiedBy?: string;
+  };
+  setInfected: React.Dispatch<React.SetStateAction<{
+    isInfected: boolean;
+    infectedAt?: number | undefined;
+    verifiedAt?: number | undefined;
+    verifiedBy?: string | undefined;
+  }>>;
+  exposed: {
+    isExposed: boolean;
+    notifiedAt?: number; // timestamp
+    exposedCode?: number; // added exposedCode property
+  };
+  setExposed: React.Dispatch<React.SetStateAction<{
+    isExposed: boolean;
+    notifiedAt?: number | undefined;
+    exposedCode?: number | undefined; // added exposedCode property
+  }>>;
 }
 
 export const AppContext = createContext<AppState>({
   connected: false,
   setConnected: () => { },
-  infected: false,
+  infected: {
+    isInfected: false,
+  },
   setInfected: () => { },
-  exposed: false,
+  exposed: {
+    isExposed: false,
+  },
   setExposed: () => { },
 });
 
@@ -35,8 +57,21 @@ export default function RootLayout() {
   });
 
   const [connected, setConnected] = useState<boolean>(false);
-  const [infected, setInfected] = useState<boolean>(false);
-  const [exposed, setExposed] = useState<boolean>(false);
+  const [infected, setInfected] = useState<{
+    isInfected: boolean;
+    infectedAt?: number;
+    verifiedAt?: number;
+    verifiedBy?: string;
+  }>({
+    isInfected: false,
+  });
+  const [exposed, setExposed] = useState<{
+    isExposed: boolean;
+    notifiedAt?: number;
+    exposedCode?: number;
+  }>({
+    isExposed: false,
+  });
 
   useEffect(() => {
     if (loaded) {
