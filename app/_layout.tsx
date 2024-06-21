@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { connect, disconnect } from "starknetkit"
+import { WebWalletConnector } from "starknetkit/webwallet"
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -56,6 +58,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const connectWallet = async () => {
+  const { wallet } = await connect({ webWalletUrl: "https://web.argent.xyz" })
+
+  if (wallet && wallet.isConnected) {
+    console.log('connected. wallet:', wallet);
+    // setConnection(wallet)
+    // setProvider(wallet.account)
+    // setAddress(wallet.selectedAddress)
+  }
+}
 
 export const AppContext = createContext<AppState>({
   connected: false,
@@ -139,6 +151,7 @@ const RootLayout = () => {
       }}
     >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <div onClick={connectWallet}>test</div>
         <Stack>
           {/* Your navigation stack screens */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
