@@ -6,8 +6,15 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { connect, disconnect } from "starknetkit"
-import { WebWalletConnector } from "starknetkit/webwallet"
+import { sepolia } from "@starknet-react/chains";
+import {
+  StarknetConfig,
+  publicProvider,
+  argent,
+  useInjectedConnectors,
+  voyager,
+} from "@starknet-react/core";
+import ConnectWallet from './ConnectWallet';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -58,16 +65,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const connectWallet = async () => {
-  const { wallet } = await connect({ webWalletUrl: "https://web.argent.xyz" })
+// const connectWallet = async () => {
+//   const { wallet } = await connect({ webWalletUrl: "https://web.argent.xyz" })
 
-  if (wallet && wallet.isConnected) {
-    console.log('connected. wallet:', wallet);
-    // setConnection(wallet)
-    // setProvider(wallet.account)
-    // setAddress(wallet.selectedAddress)
-  }
-}
+//   if (wallet && wallet.isConnected) {
+//     console.log('connected. wallet:', wallet);
+//     // setConnection(wallet)
+//     // setProvider(wallet.account)
+//     // setAddress(wallet.selectedAddress)
+//   }
+// }
+
 
 export const AppContext = createContext<AppState>({
   connected: false,
@@ -89,6 +97,20 @@ const RootLayout = () => {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  const chains = [sepolia];
+  const provider = publicProvider();
+  const { connectors } = useInjectedConnectors({
+    // Show these connectors if the user has no connector installed.
+    recommended: [
+      argent(),
+    ],
+    // Hide recommended connectors if the user has any connector installed.
+    includeRecommended: "onlyIfNoConnectors",
+    // Randomize the order of the connectors.
+    order: "random"
+  });
+
 
   const [connected, setConnected] = useState<boolean>(false);
   const [infected, setInfected] = useState<{
@@ -150,14 +172,21 @@ const RootLayout = () => {
         setEncounters,
       }}
     >
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <div onClick={connectWallet}>test</div>
-        <Stack>
-          {/* Your navigation stack screens */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ThemeProvider>
+      <StarknetConfig
+        chains={chains}
+        provider={provider}
+        connectors={connectors}
+        explorer={voyager}
+        >
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <ConnectWallet />
+          <Stack>
+            {/* Your navigation stack screens */}
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </ThemeProvider>
+      </StarknetConfig>
     </AppContext.Provider>
   );
 };
