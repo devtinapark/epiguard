@@ -25,13 +25,15 @@ export default function ReadTest() {
   const handleButtonPress = (name: string, args: any[] = []) => {
     setFunctionName(name);
     setArgs(args);
-    if (!isLoading) {
-      console.log(data);
-      setReadRequested(true);
-      setInfected({isInfected: data?.test, verifiedAt: data?.time})
-      console.log('infected', infected);
-    }
   };
+
+  useEffect(() => {
+    if (functionName && args.length > 0 && !isLoading && data?.test !== undefined) {
+      setInfected({ isInfected: data.test, verifiedAt: data.time });
+      setReadRequested(true);
+      console.log('data.test data.time', data.test, data.time);
+    }
+  }, [data, isLoading, functionName, args]);
 
   if (isLoading) return <Text>Loading ...</Text>;
   if (isError) return <Text>{error.message}</Text>;

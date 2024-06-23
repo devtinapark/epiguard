@@ -15,6 +15,12 @@ export default function HomeScreen() {
   const hospitalAddress = "0x2047c0d4658f9e13ebeb8e14ec069f8aa9bee9220a8d257ee0bab18ab766274";
   const vitalikAddress = "0xe0f0b547949656061405b79c89c4c44f4a711e27578f7bd2f74152da59545f";
   const tinaAddress = "0x2e610c56cef9d810c6a70fd6c9cbdf79e4112eae83baec9e25c23cf2128bede";
+  const formatTimestampToDate = (timestamp) => {
+    if (!timestamp) return '';
+    const secondsTimestamp = Number(timestamp);
+    const date = new Date(secondsTimestamp * 1000);
+    return date.toUTCString();
+  };
 
   return (
     <ParallaxScrollView
@@ -66,7 +72,7 @@ export default function HomeScreen() {
               <ThemedText type="defaultSemiBold">{infected.isInfected ? ' Infected' : ' Not Infected'}</ThemedText>
             </ThemedText>
             <ThemedText style={styles.marginBottom}>Verified At:
-              <ThemedText type="defaultSemiBold">{infected.verifiedAt}</ThemedText>
+              <ThemedText type="defaultSemiBold"> {formatTimestampToDate(infected.verifiedAt)}</ThemedText>
             </ThemedText>
 </>
 )}
