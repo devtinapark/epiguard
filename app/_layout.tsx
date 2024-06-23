@@ -51,6 +51,12 @@ interface AppState {
   }>>;
   encounters: Encounter[];
   setEncounters: React.Dispatch<React.SetStateAction<Encounter[]>>;
+  address: string;
+  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  sendTestAddress: string;
+  setSendTestAddress: React.Dispatch<React.SetStateAction<string>>;
+  readRequested: boolean;
+  setReadRequested: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const firebaseConfig = {
@@ -90,6 +96,12 @@ export const AppContext = createContext<AppState>({
   setExposed: () => { },
   encounters: [],
   setEncounters: () => { },
+  address: "",
+  setAddress: () => { },
+  sendTestAddress: "",
+  setSendTestAddress: () => { },
+  readRequested: false,
+  setReadRequested: () => { },
 });
 
 const RootLayout = () => {
@@ -99,6 +111,7 @@ const RootLayout = () => {
   });
 
   const chains = [sepolia];
+
   const provider = publicProvider();
   const { connectors } = useInjectedConnectors({
     // Show these connectors if the user has no connector installed.
@@ -131,6 +144,9 @@ const RootLayout = () => {
   });
 
   const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [address, setAddress] = useState<string>("");
+  const [sendTestAddress, setSendTestAddress] = useState<string>("");
+  const [readRequested, setReadRequested] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -170,6 +186,12 @@ const RootLayout = () => {
         setExposed,
         encounters,
         setEncounters,
+        address,
+        setAddress,
+        sendTestAddress,
+        setSendTestAddress,
+        readRequested,
+        setReadRequested,
       }}
     >
       <StarknetConfig
